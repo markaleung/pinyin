@@ -66,7 +66,7 @@ class OneFile(OneText):
         self.config = config_
         self.lines = []
     def _read_file(self):
-        with open(self.config.folder + self.config.filename) as file:
+        with open(f'{self.config.folder_input}/{self.config.filename}') as file:
             self.config.text = file.read()
         if 'cantonese.txt' in self.config.filename:
             self.config.language = 'cantonese'
@@ -76,7 +76,7 @@ class OneFile(OneText):
             raise ValueError("filename doesn't contain cantonese or mandarin")
     def _write_file(self):
         self.filename_output = self.config.filename.replace(self.config.language, MAPPING[self.config.language])
-        with open(self.filename_output, 'w') as file:
+        with open(f'{self.config.folder_output}/{self.filename_output}', 'w') as file:
             file.write(self.output)
     def main(self):
         self._read_file()
@@ -90,7 +90,7 @@ class MultiFile:
         self.one_file = OneFile(config_ = self.config)
         self.one_file.main()
     def main(self):
-        for self.config.filename in tqdm.tqdm(os.listdir(self.config.folder)):
+        for self.config.filename in tqdm.tqdm(os.listdir(self.config.folder_input)):
             if re.search(r'(mandarin|cantonese).txt$', self.config.filename):
                 self._run_file()
 
