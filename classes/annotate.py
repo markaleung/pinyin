@@ -18,11 +18,17 @@ class OneChar:
             return self.config.char
 class Cantonese(OneChar):
     def _translate(self):
-        self.output = jyutping.get(self.config.char)[0]
-        if self.output is None:
-            self.output = self.config.char
-        elif isinstance(self.output, list):
-            self.output = self.output[0]
+        self.output = jyutping.get(self.config.char, multiple = self.config.cantonese_multiple)[0]
+        if self.config.cantonese_multiple:
+            if len(self.output) == 0:
+                self.output = self.config.char
+            elif len(self.output) > 1:
+                self.output = f'({"".join(self.output)})'
+            elif len(self.output) == 1:
+                self.output = list(self.output)[0]
+        else:
+            if self.output is None:
+                self.output = self.config.char
 class Mandarin(OneChar):
     def _translate(self):
         self.output = pinyin.get(self.config.char, format = 'numerical')
@@ -51,12 +57,15 @@ class OneText:
     def __init__(self):
         self.config = Config()
         self.lines = []
+    def _split_text(self):
+        self.config.text = re.sub(r'([，。])', r'\1\n', self.config.text)
     def _run_line(self):
         self.one_line = OneLine(config_ = self.config)
         self.lines.append(self.one_line.main())
     def _make_output(self):
         self.output = self.config.newline.join(self.lines)
     def main(self):
+        self._split_text()
         for self.config.line in self.config.text.split('\n'):
             self._run_line()
         self._make_output()
