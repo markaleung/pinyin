@@ -9,10 +9,38 @@ class Config:
         # line, char, character_is_chinese is auto added
         # language, folder, filename, text must be added
 
+class MultiplePronunciation:
+    def __init__(self, config_):
+        self.config = config_
+        self.option_dict = {}
+    def _parse_option(self):
+        self.start, self.tone = re.search(r'^([a-z]+)([0-9]$)', self.option).groups()
+        if self.start not in self.option_dict:
+            self.option_dict[self.start] = []
+        self.option_dict[self.start].append(self.tone)
+    def _join_options(self):
+        self.option_dict[self.start] = ''.join(sorted(self.option_dict[self.start]))
+    def _make_output(self):        
+        self.output = ''.join([start+tone for start, tone in sorted(self.option_dict.items())])
+        if len(self.option_dict) > 1:
+            self.output = f'({self.output})'
+    def main(self):
+        for self.option in self.config.char_options:
+            self._parse_option()
+        for self.start in self.option_dict:
+            self._join_options()
+        if len(self.option_dict) > 0:
+            self._make_output()
+        else: # Invalid character is empty set
+            self.output = self.config.char
+        return self.output
+
 class OneChar:
     def __init__(self, config_):
         self.config = config_
     def _translate(self):
+        pass
+    def _after_translate(self):
         self.output = ' ' + self.output
         self.config.character_is_chinese = True
     def _no_translate(self):
@@ -23,6 +51,7 @@ class OneChar:
         # Detect Chinese characters
         if re.search(u'[\u4e00-\u9fff]', self.config.char):
             self._translate()
+            self._after_translate()
         else:
             self._no_translate()
         return self.output
@@ -31,23 +60,14 @@ class Cantonese(OneChar):
         self.output = jyutping.get(self.config.char, multiple = self.config.cantonese_multiple_pronunciation)[0]
         # All output is sets
         if self.config.cantonese_multiple_pronunciation:
-            # Invalid character is empty set
-            if len(self.output) == 0:
-                self.output = self.config.char
-            elif len(self.output) > 1:
-                self.output = f'({"".join(self.output)})'
-            # Even single pronunciation is a set
-            elif len(self.output) == 1:
-                self.output = list(self.output)[0]
-        else:
-            # No sets for single pronunciation
-            if self.output is None:
-                self.output = self.config.char
-        super()._translate()
+            self.config.char_options = self.output
+            self.multiple = MultiplePronunciation(config_ = self.config)
+            self.output = self.multiple.main()
+        elif self.output is None:
+            self.output = self.config.char
 class Mandarin(OneChar):
     def _translate(self):
         self.output = pinyin.get(self.config.char, format = 'numerical')
-        super()._translate()
 
 class OneLine:
     def __init__(self, config_):
