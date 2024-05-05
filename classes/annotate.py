@@ -20,7 +20,7 @@ class MultiplePronunciation:
         self.option_dict[self.start].append(self.tone)
     def _join_options(self):
         self.option_dict[self.start] = ''.join(sorted(self.option_dict[self.start]))
-    def _make_output(self):        
+    def _make_output(self):
         self.output = ''.join([start+tone for start, tone in sorted(self.option_dict.items())])
         if len(self.option_dict) > 1:
             self.output = f'({self.output})'
