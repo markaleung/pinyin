@@ -6,23 +6,30 @@ class Config:
         self.split_text_on_punctuation = True
         self.cantonese_multiple_pronunciation = True
         self.chinese_punctuation = r'([，。？])'
-        # language, folder, filename, text, line, char must be added
+        # line, char, character_is_chinese is auto added
+        # language, folder, filename, text must be added
 
 class OneChar:
     def __init__(self, config_):
         self.config = config_
     def _translate(self):
-        pass
+        self.output = ' ' + self.output
+        self.config.character_is_chinese = True
+    def _no_translate(self):
+        self.spacer = ' ' if self.config.character_is_chinese is True else ''
+        self.output = self.spacer + self.config.char
+        self.config.character_is_chinese = False
     def main(self):
         # Detect Chinese characters
         if re.search(u'[\u4e00-\u9fff]', self.config.char):
             self._translate()
-            return self.output + ' '
         else:
-            return self.config.char
+            self._no_translate()
+        return self.output
 class Cantonese(OneChar):
     def _translate(self):
         self.output = jyutping.get(self.config.char, multiple = self.config.cantonese_multiple_pronunciation)[0]
+        # All output is sets
         if self.config.cantonese_multiple_pronunciation:
             # Invalid character is empty set
             if len(self.output) == 0:
@@ -36,9 +43,11 @@ class Cantonese(OneChar):
             # No sets for single pronunciation
             if self.output is None:
                 self.output = self.config.char
+        super()._translate()
 class Mandarin(OneChar):
     def _translate(self):
         self.output = pinyin.get(self.config.char, format = 'numerical')
+        super()._translate()
 
 class OneLine:
     def __init__(self, config_):
@@ -55,6 +64,16 @@ class OneLine:
         else:
             self.output = self.translation
     def main(self):
+        '''
+        Must reset for every line
+        Otherwise, if the previous line ends with a Chinese character
+        And the next line has no Chinese characters
+        A space will be inserted at the beginning
+        i.e. 'abc' becomes ' abc'
+        And the program will print it twice
+        Because the line has changed
+        '''
+        self.config.character_is_chinese = False
         for self.config.char in self.config.line:
             self._translate()
         self._make_output()
