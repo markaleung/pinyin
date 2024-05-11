@@ -66,7 +66,7 @@ class Cantonese(OneChar):
             self.output = self.multiple.main()
         elif self.output is None:
             self.output = self.config.char
-class Yale(Jyutping):
+class Yale(Cantonese):
     def _translate(self):
         super()._translate()
         if self.output is not None:
