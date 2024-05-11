@@ -12,7 +12,7 @@ Tools for Chinese Pinyin
     - notebooks/Notebook Pinyin.ipynb
 - Run Streamlit web app
     - `streamlit run streamlit_app.py` to run locally
-    - [pinyin.streamlit.app](pinyin.streamlit.app) to use cloud version
+    - Click [here](http://pinyin.streamlit.app) to use the cloud version
 
 ## Module Tree
 - MultiFile: Run all files in folder

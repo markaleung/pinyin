@@ -6,6 +6,7 @@ class Config:
         self.split_text_on_punctuation = True
         self.cantonese_multiple_pronunciation = True
         self.chinese_punctuation = r'([，。？])'
+        self.yale_filters = (('oe', 'eu'), ('eo', 'eu'), ('j', 'y'), ('z', 'j'), ('c', 'ch'), ('yy', 'y'))
         # line, char, character_is_chinese is auto added
         # language, folder, filename, text must be added
 
@@ -65,6 +66,12 @@ class Cantonese(OneChar):
             self.output = self.multiple.main()
         elif self.output is None:
             self.output = self.config.char
+class Yale(Jyutping):
+    def _translate(self):
+        super()._translate()
+        if self.output is not None:
+            for self.old, self.new in self.config.yale_filters:
+                self.output = self.output.replace(self.old, self.new)
 class Mandarin(OneChar):
     def _translate(self):
         self.output = pinyin.get(self.config.char, format = 'numerical')
@@ -152,9 +159,11 @@ class MultiFile:
 
 CLASSES = {
     'cantonese': Cantonese, 
+    'cantonese yale': Yale, 
     'mandarin': Mandarin
 }
 MAPPING = {
     'cantonese': 'jyutping', 
+    'cantonese yale': 'yale', 
     'mandarin': 'pinyin', 
 }
