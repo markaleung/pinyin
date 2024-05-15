@@ -19,7 +19,7 @@ class Pivot:
         self.columns_group = [f'{self.column}_{self.pinyin2}', f'{self.column2}_{self.pinyin}']
     def _pivot(self):
         self.df = self.df_raw.query(f'{self.column_query} == "{self.value}"').groupby(self.columns_group).size().unstack()
-        self.df = self.df.fillna('').astype(str)
+        # self.df = self.df.fillna('').astype(str)
         if self.df.shape[1] > self.df.shape[0]:
             self.df = self.df.T
     def main(self):
