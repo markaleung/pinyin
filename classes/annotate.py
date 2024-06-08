@@ -5,7 +5,7 @@ class Config:
         self.newline = '\n'
         self.split_text_on_punctuation = True
         self.cantonese_multiple_pronunciation = True
-        self.chinese_punctuation = r'([，。？])'
+        self.chinese_punctuation = r'([，。？：；！,.?:;!])'
         self.yale_filters = (('oe', 'eu'), ('eo', 'eu'), ('j', 'y'), ('z', 'j'), ('c', 'ch'), ('yy', 'y'))
         # line, char, character_is_chinese is auto added
         # language, folder, filename, text must be added
