@@ -1,3 +1,4 @@
 jyutping
 pinyin
 tqdm
+streamlit==1.32
