@@ -20,7 +20,7 @@ class Pivot:
     def _pivot(self):
         self.df = self.df_raw.query(f'{self.column_query} == "{self.value}"').groupby(self.columns_group).size().unstack()
         # self.df = self.df.fillna('').astype(str)
-        if self.df.shape[1] > self.df.shape[0]:
+        if self.df.shape[1] > self.df.shape[0] or True:
             self.df = self.df.T
     def main(self):
         self._make_reverse()
