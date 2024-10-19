@@ -40,6 +40,8 @@ class Mandarin(_SplitCharacter):
     def _set_subclass_variables(self):
         self.name = 'Mandarin'
         self.replacements = [
+            [r'yan(\d)', r'yän\1'], 
+            [r'([jxqy][iu])an(\d)', r'\1än\2'], 
             # u is different after jxqy
             [r'([jxqy])u', r'\1ü'], 
             ['v', 'ü'], 
