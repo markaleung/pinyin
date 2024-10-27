@@ -10,7 +10,7 @@ class _SplitCharacter:
         for self.start, self.end in self.replacements:
             self.character = re.sub(self.start, self.end, self.character)
     def _parse_character(self):
-        self.initial, self.middle, self.final, self.tone = re.search(r'^([^aieouü_]*)([aieouü_]+)([^aieouü_]*)(\d)', self.character).groups()
+        self.initial, self.middle, self.final, self.tone = re.search(r'^([^aäieouü_]*)([aäieouü_]+)([^aäieouü_]*)(\d)', self.character).groups()
         self.output = {
             f'Initial_{self.name}': self.initial, 
             # f'middle_{self.name}': self.middle, 
@@ -40,8 +40,8 @@ class Mandarin(_SplitCharacter):
     def _set_subclass_variables(self):
         self.name = 'Mandarin'
         self.replacements = [
-            [r'yan(\d)', r'yän\1'], 
-            [r'([jxqy][iu])an(\d)', r'\1än\2'], 
+            [r'([yi])an(\d)', r'\1än\2'], 
+            [r'([jxqy][u])an(\d)', r'\1än\2'], 
             # u is different after jxqy
             [r'([jxqy])u', r'\1ü'], 
             ['v', 'ü'], 
@@ -73,7 +73,7 @@ class SplitColumn:
 class Manager:
     def _make_pinyin(self):
         self.df_input = pd.read_csv('files_resource/hanzi_db.csv')[['character']]
-        self.df_input['Cantonese'] = self.df_input.character.map(lambda char: jyutping.get(char)[0])
+        self.df_input['Cantonese'] = self.df_input.character.map(lambda char: sorted(jyutping.get(char))[0])
         self.df_input['Mandarin'] = self.df_input.character.map(lambda char: pinyin.get(char, format = 'numerical'))
         # Reset so indices line up when concatenating with other dfs
         self.df_input = self.df_input.dropna().reset_index(drop = True)
