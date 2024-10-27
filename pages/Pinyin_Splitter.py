@@ -14,6 +14,9 @@ class Manager:
         self.pivot.value = st.selectbox('Value', self.unique_values)
     def _run_pivot(self):
         self.pivot.main()
+        self.columns_sort = self.pivot.df.sum().sort_values(ascending = False).index
+        self.index_sort = self.pivot.df.sum(axis = 1).sort_values(ascending = False).index
+        self.pivot.df = self.pivot.df.loc[self.index_sort, self.columns_sort]
         st.dataframe(self.pivot.df)
     def _filter_examples(self):
         self.column_name = st.selectbox(self.pivot.df.columns.name, self.pivot.df.columns)
