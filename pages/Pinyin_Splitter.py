@@ -10,8 +10,11 @@ class Manager:
         self.pivot.pinyin = st.selectbox('Language', ['Mandarin', 'Cantonese'])
     def _select_value(self):
         self.segment = f'{self.pivot.column}_{self.pivot.pinyin}'
-        self.unique_values = sorted(self.pivot.df_raw[self.segment].unique())
-        self.pivot.value = st.selectbox('Value', self.unique_values)
+        self.unique = sorted(self.pivot.df_raw[self.segment].unique())
+        self.default = self.unique.index('ang') if 'ang' in self.unique else 0
+        self.pivot.value = st.selectbox(
+            'Value', self.unique, index = self.default
+        )
     def _run_pivot(self):
         self.pivot.main()
         self.columns_sort = self.pivot.df.sum().sort_values(ascending = False).index
@@ -19,9 +22,15 @@ class Manager:
         self.pivot.df = self.pivot.df.loc[self.index_sort, self.columns_sort]
         st.dataframe(self.pivot.df)
     def _filter_examples(self):
-        self.column_name = st.selectbox(self.pivot.df.columns.name, self.pivot.df.columns)
-        self.df_filtered = self.pivot.df.T.query(f'{self.pivot.df.columns.name} == @self.column_name').T.dropna()
-        self.index_name = st.selectbox(self.df_filtered.index.name, self.df_filtered.index)
+        self.column_name = st.selectbox(
+            self.pivot.df.columns.name, self.pivot.df.columns
+        )
+        self.df_filtered = self.pivot.df.T.query(
+            f'{self.pivot.df.columns.name} == @self.column_name'
+        ).T.dropna()
+        self.index_name = st.selectbox(
+            self.df_filtered.index.name, self.df_filtered.index
+        )
     def _run_examples(self):
         st.dataframe(self.pivot.df_raw.query(
             f'{self.segment} == @self.pivot.value ' 
