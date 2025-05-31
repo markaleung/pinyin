@@ -16,6 +16,7 @@ st.write('''
 - [TypeDuck](https://www.typeduck.hk)
 # Other Tools
 - [Cantonese Font](https://visual-fonts.com) - Chinese characters with Jyutping
+- [Hong Kong Code-Mixing Dictionary](https://www.instagram.com/hongkongcodemix)
 - [Words.hk](https://words.hk) - Cantonese dictionary
 - [Zidou](https://chaaklau.github.io/zidou/) - Cantonese wordle
 ''')
